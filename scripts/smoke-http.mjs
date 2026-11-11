@@ -37,7 +37,7 @@ try {
   const run = await execute("run", 'print "Hello from Semauri".');
   assert.equal(run.ok, true, "real Semauri run: " + JSON.stringify(run));
   assert.equal(run.stdout, "Hello from Semauri\n");
-  const check = await execute("check", "let value be running product of (a list of 2, 3, 4).");
+  const check = await execute("check", "let value be running product of (a list of 2, 3, 4).\nassert value is equal to (a list of 2, 6, 24).");
   assert.equal(check.ok, true, "real Semauri check: " + JSON.stringify(check));
   assert.equal(check.stdout.trim(), "OK");
   const formatted = await execute("format", 'PRINT "Hello".');
