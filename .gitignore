@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+.vercel/
+.semauri/
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
+coverage/
+.DS_Store
