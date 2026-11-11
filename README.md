@@ -14,7 +14,7 @@ Semauri Playground is a free, open-source interactive environment for [Semauri](
 
 ## Screenshot
 
-![Semauri Playground showing syntax highlighting, program execution, and console output](public/playground-screenshot.webp)
+![Semauri Playground showing syntax highlighting, program execution, and console output](public/playground-screenshot.png)
 
 ## Features
 
