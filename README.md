@@ -1,57 +1,107 @@
 # Semauri Playground
 
-An open-source, browser-based editor and execution environment for [Semauri](https://github.com/edujbarrios/semauri), the natural-language-inspired programming language.
-
 ![Semauri logo](public/semauri-logo.png)
 
-Write, check, format, and run `.suri` files with **the official Semauri Rust compiler**, not a simulated interpreter. Features include Monaco Editor with custom Semauri syntax highlighting, code completion snippets, four runnable examples, console output, compiler diagnostics, file uploads/downloads, and shareable links.
+**Write, explore, and run Semauri in your browser.**
 
-## Tech stack
+[Semauri Playground](https://github.com/edujbarrios/semauri-playground) is an open-source coding environment for [Semauri](https://github.com/edujbarrios/semauri), a natural-language-inspired programming language. It combines a modern code editor with the official Semauri compiler so you can experiment with `.suri` programs without leaving the page.
 
-- Next.js App Router, React, TypeScript and custom CSS, optimized for Vercel.
-- Monaco Editor with a Semauri Monarch grammar and theme.
-- Node.js Vercel Functions running the **official Semauri v0.71.0** compiler.
-- No database or external compiler server.
+## Features
 
-## Development
+- **Semauri syntax highlighting** in Monaco Editor, with a custom theme, language rules, and code completion snippets.
+- **Run, Check, and Format** commands powered by the official Semauri compiler.
+- **Interactive console** displaying program output, compilation results, and errors.
+- **Inline diagnostics** with source positions when supplied by the compiler.
+- **Ready-to-run examples** covering basic programs, lists, running statistics, and adjacent differences.
+- **File management** for opening and downloading `.suri` files.
+- **Shareable links** for short programs, plus local draft preservation.
+- **Responsive interface** designed for desktop and mobile devices.
+- **Open source**, with automated checks and an MIT license.
 
-Requirements: Node.js 22+, npm, and a local Semauri compiler for interactive execution.
+## Try Semauri
+
+A small Semauri program looks like this:
+
+```text
+let values be a list of 3, 5, 2, 6.
+let totals be running total of values.
+
+assert totals is equal to (a list of 3, 8, 10, 16).
+print "Running sum verified".
+```
+
+Use the **Examples** menu to load a program. Select **Run** to execute it, **Check** to validate it without running it, or **Format** to apply the language's formatter.
+
+## Getting started locally
+
+You will need **Node.js 22 or newer**, npm, and the [Semauri compiler](https://github.com/edujbarrios/semauri) to execute programs.
 
 ```sh
+git clone https://github.com/edujbarrios/semauri-playground.git
+cd semauri-playground
 npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+For local **Run**, **Check**, and **Format** support, set `SEMAURI_BINARY_PATH` to the absolute path of your installed Semauri executable before starting the development server:
+
+```sh
 SEMAURI_BINARY_PATH=/absolute/path/to/semauri npm run dev
+```
+
+On Linux x86_64, the production build script can prepare the version-pinned official compiler automatically. On other development platforms, use `SEMAURI_BINARY_PATH` to select your local installation.
+
+### Quality checks
+
+```sh
 npm test
 npm run typecheck
 npm run build
 ```
 
-Open http://localhost:3000. On Linux x86_64, `npm run build` prepares the official Semauri compiler in `.semauri/bin/semauri` by downloading the release with SHA-256 validation, or compiling from the pinned official release if the executable is incompatible. On other development platforms, configure `SEMAURI_BINARY_PATH` to your installed compiler. The editor loads without a compiler, but execution requires one.
+The automated test suite also exercises the real compiler through the HTTP API and checks that the compiled executable is included in the server build.
 
-## Deploy to Vercel
+## How it works
 
-1. Import `edujbarrios/semauri-playground` into your Vercel account.
-2. Choose Next.js with the repository root as the root directory.
-3. Deploy `main`; the `build` script prepares the compiler automatically.
-4. Confirm `Run`, `Check`, and `Format` function in the deployed app.
+The interface uses **Next.js**, **React**, **TypeScript**, and **Monaco Editor**. Semauri syntax highlighting is implemented as a dedicated Monaco language definition.
 
-If the platform rejects native executable execution or build-time compiler preparation, deployment must fail visibly rather than simulate the compiler.
+When you run a program, the server invokes the **official Semauri Rust compiler**. The playground does not use a simulated interpreter or reimplement Semauri semantics in JavaScript.
 
-## Limits and security
+The compiler is the source of truth for parsing, type checking, formatting, execution, and diagnostics.
 
-The public endpoint accepts up to 32 KiB of source, runs the official compiler through `execFile` (no shell), times out after four seconds and caps output at 64 KiB. It grants **only `console_write`**; filesystem, network, and shell capabilities are not granted to user programs. Each execution runs in a temporary directory that is deleted afterward.
+## Execution limits
 
-The in-memory rate limiter is best-effort and not shared across Vercel instances. Enable platform-level protection/rate limiting for production abuse prevention. Do not extend capabilities or allow untrusted executables on the server.
+To make interactive experimentation safer, the execution endpoint:
 
-## Project layout
+- Accepts up to **32 KiB** of source code per request.
+- Limits compiler execution to **4 seconds** and process output to **64 KiB**.
+- Grants only the Semauri `console_write` capability; other capabilities are not enabled.
+- Uses isolated temporary working directories and removes them after each request.
+- Performs basic request throttling.
 
-- `app/`: Next.js page, styles and compiler-backed API.
-- `components/playground.tsx`: editor, console and file controls.
-- `lib/semauri-language.ts`: syntax highlighting, language configuration and completion.
-- `lib/protocol.ts`: request validation and compiler diagnostics.
-- `scripts/prepare-compiler.mjs`: verified compiler preparation.
-- `public/semauri-logo.png`: supplied Semauri logo, optimized for the web.
-- `tests/`: automated tests; `.github/workflows/`: CI.
+These limits are safeguards, **not a complete security sandbox** or a substitute for infrastructure-level abuse protection.
+
+## Project structure
+
+| Path | Purpose |
+| --- | --- |
+| `app/` | Application pages, styling, and compiler API |
+| `components/playground.tsx` | Editor, console, examples, and file actions |
+| `lib/semauri-language.ts` | Syntax highlighting, editor configuration, and completions |
+| `lib/protocol.ts` | Request validation and diagnostic parsing |
+| `lib/examples.ts` | Example `.suri` programs |
+| `scripts/` | Compiler preparation and integration checks |
+| `public/semauri-logo.png` | Semauri PNG logo |
+| `tests/` | Automated tests |
+
+## Contributing
+
+Contributions are welcome! Open an issue to suggest an improvement or report a bug, or submit a pull request with a focused change.
+
+Before opening a pull request, run the tests and type checker. For editor-language changes, check that syntax highlighting and completion suggestions agree with the official Semauri language.
 
 ## License
 
-The playground is distributed under the MIT License. The [Semauri compiler](https://github.com/edujbarrios/semauri) is a separate Apache-2.0 project. The Semauri brand and supplied logo remain attributable to their owner.
+This playground is licensed under the [MIT License](LICENSE). The [Semauri compiler](https://github.com/edujbarrios/semauri) is a separate project distributed under Apache-2.0. The Semauri name and supplied logo remain attributable to their owner.
