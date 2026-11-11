@@ -1,0 +1,37 @@
+name: Refresh Playground screenshot
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/capture-playground.yml
+      - scripts/capture-playground.cjs
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install screenshot browser
+        run: |
+          npm install --no-save --ignore-scripts --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Visit live Playground and capture a 2x PNG
+        run: node scripts/capture-playground.cjs
+      - name: Commit screenshot to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/playground-screenshot.png README.md
+          git diff --cached --quiet && exit 0
+          git commit -m "docs: replace blurry preview with live 2x browser screenshot"
+          git push origin HEAD:main
