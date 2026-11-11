@@ -12,6 +12,10 @@
 
 Semauri Playground is a free, open-source interactive environment for [Semauri](https://github.com/edujbarrios/semauri), the natural-language-inspired programming language. Write `.suri` code in a full-featured editor, run it with the **official Semauri compiler**, and see results instantly in the integrated console.
 
+## Screenshot
+
+![Semauri Playground showing syntax highlighting, program execution, and console output](public/playground-screenshot.webp)
+
 ## Features
 
 - **Syntax highlighting** for Semauri, powered by Monaco Editor and a dedicated language grammar.
@@ -52,7 +56,7 @@ The public execution endpoint imposes limits on program size, execution time, an
 | `lib/semauri-language.ts` | Syntax highlighting, language configuration, and completion |
 | `lib/examples.ts` | Sample Semauri programs |
 | `lib/protocol.ts` | Request validation and compiler diagnostics |
-| `public/` | The Semauri logo and other assets |
+| `public/` | Semauri logo and Playground screenshot |
 | `scripts/` | Compiler preparation and integration checks |
 | `tests/` | Automated regression tests |
 
