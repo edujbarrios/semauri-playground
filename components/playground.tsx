@@ -236,7 +236,7 @@ export default function Playground() {
       </header>
 
       {menuOpen && <nav className="mobile-menu">
-        <a href="https://github.com/edujbarrios/semauri" target="_blank" rel="noopener noreferrer">Documentación</a>
+        <a href="https://github.com/edujbarrios/semauri" target="_blank" rel="noopener noreferrer">Docs</a>
         <a href="https://github.com/edujbarrios/semauri-playground" target="_blank" rel="noopener noreferrer">GitHub / Source code</a>
       </nav>}
 

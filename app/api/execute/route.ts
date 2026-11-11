@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       const output = await exec(binary, commands[parsed.action](source), {
         cwd: work, timeout: 4_000, maxBuffer: 64 * 1024, killSignal: "SIGKILL",
         encoding: "utf8", windowsHide: true,
-        env: { PATH: process.env.PATH || "/usr/bin:/bin", HOME: work, LANG: "C.UTF-8" },
+        env: { NODE_ENV: "production", PATH: process.env.PATH || "/usr/bin:/bin", HOME: work, LANG: "C.UTF-8" },
       });
       stdout = output.stdout;
       stderr = output.stderr;
