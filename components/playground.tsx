@@ -301,7 +301,7 @@ export default function Playground() {
                   language="semauri"
                   theme="semauri-night"
                   value={code}
-                  onChange={value => { setCode(value || ""); setSelectedExample(""); }}
+                  onChange={value => { setCode(value || ""); setSelectedExample(""); setResult(null); setError(""); }}
                   beforeMount={registerSemauriLanguage}
                   onMount={(instance, monaco) => {
                     editorRef.current = instance;

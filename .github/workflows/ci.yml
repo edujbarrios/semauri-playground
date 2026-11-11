@@ -21,3 +21,4 @@ jobs:
         env:
           SEMAURI_VERSION: '0.71.0'
       - run: node scripts/smoke-http.mjs
+      - run: node scripts/verify-build.mjs
