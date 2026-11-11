@@ -27,10 +27,10 @@ function json(data: unknown, status = 200) {
 
 async function readSmallJson(request: Request): Promise<unknown> {
   if (Number(request.headers.get("content-length") || 0) > MAX_SOURCE_BYTES + 4096) {
-    throw new Error("Petición demasiado grande.");
+    throw new Error("Request too large.");
   }
   const reader = request.body?.getReader();
-  if (!reader) throw new Error("No se ha recibido contenido.");
+  if (!reader) throw new Error("Request body is missing.");
   const parts: Uint8Array[] = [];
   let total = 0;
   try {
@@ -40,7 +40,7 @@ async function readSmallJson(request: Request): Promise<unknown> {
       total += value.byteLength;
       if (total > MAX_SOURCE_BYTES + 4096) {
         await reader.cancel();
-        throw new Error("Petición demasiado grande.");
+        throw new Error("Request too large.");
       }
       parts.push(value);
     }
@@ -51,7 +51,7 @@ async function readSmallJson(request: Request): Promise<unknown> {
   let offset = 0;
   for (const part of parts) { bytes.set(part, offset); offset += part.byteLength; }
   try { return JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)); }
-  catch { throw new Error("El cuerpo debe ser JSON válido."); }
+  catch { throw new Error("Request body must be valid JSON."); }
 }
 
 function rateLimited(request: NextRequest) {
@@ -73,13 +73,13 @@ function rateLimited(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   if (rateLimited(request)) {
-    return json({ error: "Demasiadas ejecuciones. Inténtalo en un minuto." }, 429);
+    return json({ error: "Too many requests. Try again in one minute." }, 429);
   }
   let parsed: ReturnType<typeof validateRequest>;
   try {
     parsed = validateRequest(await readSmallJson(request));
   } catch (error) {
-    return json({ error: error instanceof Error ? error.message : "Petición inválida." }, 400);
+    return json({ error: error instanceof Error ? error.message : "Invalid request." }, 400);
   }
 
   // The official compiler's permission system must be the final authority.
@@ -112,14 +112,14 @@ export async function POST(request: NextRequest) {
       exitCode = typeof failure.code === "number" ? failure.code : 1;
       if (failure.killed || failure.signal === "SIGKILL" || failure.code === "ETIMEDOUT") {
         exitCode = 124;
-        stderr = "El programa superó el límite de 4 segundos.";
+        stderr = "The program exceeded the 4-second execution limit.";
       } else if (failure.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER") {
         exitCode = 125;
-        stderr = "El programa produjo demasiada salida.";
+        stderr = "The program produced too much output.";
       } else if (failure.code === "ENOENT" || failure.code === "EACCES") {
-        return json({ error: "El compilador oficial no está instalado en el servidor." }, 503);
+        return json({ error: "The official Semauri compiler is not installed on the server." }, 503);
       } else if (!stderr) {
-        stderr = "La ejecución terminó con un error.";
+        stderr = "The process exited with an error.";
       }
     }
     let formatted: string | undefined;
@@ -128,10 +128,10 @@ export async function POST(request: NextRequest) {
         const report = JSON.parse(stdout) as { formatted?: unknown };
         if (typeof report.formatted !== "string") throw new Error("Missing formatted text");
         formatted = report.formatted;
-        stdout = "Formato aplicado correctamente.";
+        stdout = "Code formatted successfully.";
       } catch {
         exitCode = 1;
-        stderr = "El compilador no devolvió un resultado de formato válido.";
+        stderr = "The compiler returned an invalid formatting response.";
       }
     }
     return json({
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
       ...(formatted === undefined ? {} : { formatted }),
     });
   } catch {
-    return json({ error: "No se pudo preparar la ejecución de Semauri." }, 500);
+    return json({ error: "Unable to prepare Semauri execution." }, 500);
   } finally {
     await rm(work, { recursive: true, force: true }).catch(() => {});
   }

@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Semauri Playground — Programa en lenguaje natural",
-  description: "Escribe, comprueba y ejecuta Semauri (.suri) en el navegador. El editor oficial en línea con resaltado, ejemplos y consola.",
+  title: "Semauri Playground — Code in natural language",
+  description: "Write, check, and run Semauri (.suri) in your browser, with syntax highlighting, examples, and an interactive console.",
   applicationName: "Semauri Playground",
   icons: { icon: "/semauri-logo.png", apple: "/semauri-logo.png" },
   openGraph: {
     title: "Semauri Playground",
-    description: "El lenguaje natural se encuentra con la programación.",
+    description: "Natural language meets programming.",
     type: "website",
   },
 };
@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es">
+    <html lang="en">
       <body>{children}</body>
     </html>
   );

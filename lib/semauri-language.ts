@@ -1,19 +1,19 @@
 import type { Monaco } from "@monaco-editor/react";
 
 const completions = [
-  { label: "let", detail: "Declarar una variable", insert: "let ${1:name} be ${2:value}." },
-  { label: "print", detail: "Mostrar texto", insert: "print ${1:value}." },
-  { label: "assert", detail: "Comprobar una condición", insert: "assert ${1:value} is equal to ${2:expected}." },
-  { label: "list", detail: "Crear una lista", insert: "a list of ${1:1}, ${2:2}, ${3:3}" },
-  { label: "running total", detail: "Suma acumulativa", insert: "running total of ${1:values}" },
-  { label: "running average", detail: "Media acumulativa", insert: "running average of ${1:values}" },
-  { label: "running minimum", detail: "Mínimo acumulativo", insert: "running minimum of ${1:values}" },
-  { label: "running maximum", detail: "Máximo acumulativo", insert: "running maximum of ${1:values}" },
-  { label: "running product", detail: "Producto acumulativo", insert: "running product of ${1:values}" },
-  { label: "adjacent differences", detail: "Diferencias sucesivas", insert: "adjacent differences of ${1:values}" },
-  { label: "mean squared error", detail: "MSE de residuos", insert: "mean squared error of ${1:errors}" },
-  { label: "root mean squared error", detail: "RMSE de residuos", insert: "root mean squared error of ${1:errors}" },
-  { label: "mean absolute error", detail: "MAE de residuos", insert: "mean absolute error of ${1:errors}" },
+  { label: "let", detail: "Declare a variable", insert: "let ${1:name} be ${2:value}." },
+  { label: "print", detail: "Print to console", insert: "print ${1:value}." },
+  { label: "assert", detail: "Assert a condition", insert: "assert ${1:value} is equal to ${2:expected}." },
+  { label: "list", detail: "Create a list", insert: "a list of ${1:1}, ${2:2}, ${3:3}" },
+  { label: "running total", detail: "Running total", insert: "running total of ${1:values}" },
+  { label: "running average", detail: "Running average", insert: "running average of ${1:values}" },
+  { label: "running minimum", detail: "Running minimum", insert: "running minimum of ${1:values}" },
+  { label: "running maximum", detail: "Running maximum", insert: "running maximum of ${1:values}" },
+  { label: "running product", detail: "Running product", insert: "running product of ${1:values}" },
+  { label: "adjacent differences", detail: "Adjacent differences", insert: "adjacent differences of ${1:values}" },
+  { label: "mean squared error", detail: "Mean squared error", insert: "mean squared error of ${1:errors}" },
+  { label: "root mean squared error", detail: "Root mean squared error", insert: "root mean squared error of ${1:errors}" },
+  { label: "mean absolute error", detail: "Mean absolute error", insert: "mean absolute error of ${1:errors}" },
 ];
 
 export function registerSemauriLanguage(monaco: Monaco) {

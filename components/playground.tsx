@@ -101,18 +101,18 @@ export default function Playground() {
         signal: controller.signal,
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "No se pudo conectar con el compilador.");
+      if (!response.ok) throw new Error(data.error || "Could not connect to the compiler.");
       const output = data as ExecutionResult;
       setResult(output);
       if (kind === "format" && output.ok && typeof output.formatted === "string") {
         setCode(output.formatted);
-        notify("Código formateado con Semauri.");
+        notify("Code formatted using Semauri.");
       }
       if (!output.ok && output.diagnostics.length) setConsoleTab("errors");
       setMobilePanel("console");
     } catch (failure) {
       if (controller.signal.aborted) return;
-      setError(failure instanceof Error ? failure.message : "Error inesperado.");
+      setError(failure instanceof Error ? failure.message : "Unexpected error.");
       setResult({
         ok: false, action: kind, stdout: "", stderr: "",
         exitCode: 1, elapsedMs: Math.round(performance.now() - start), diagnostics: [],
@@ -151,7 +151,7 @@ export default function Playground() {
     setError("");
     setMobilePanel("editor");
     setShowExamples(false);
-    notify("Ejemplo cargado: " + picked.name);
+    notify("Example loaded: " + picked.name);
   };
 
   const reset = () => {
@@ -161,17 +161,17 @@ export default function Playground() {
     setResult(null);
     setError("");
     setMobilePanel("editor");
-    notify("Editor restaurado.");
+    notify("Editor reset.");
   };
 
   const openFile = async (file?: File) => {
     if (!file) return;
     if (!file.name.toLowerCase().endsWith(".suri")) {
-      notify("Solo se admiten archivos .suri.");
+      notify("Only .suri files are supported.");
       return;
     }
     if (file.size > MAX_SOURCE_BYTES) {
-      notify("El archivo supera los 32 KiB permitidos.");
+      notify("The file exceeds the 32 KiB limit.");
       return;
     }
     const contents = await file.text();
@@ -180,7 +180,7 @@ export default function Playground() {
     setResult(null);
     setSelectedExample("");
     setMobilePanel("editor");
-    notify("Archivo cargado.");
+    notify("File opened.");
   };
 
   const download = () => {
@@ -191,18 +191,18 @@ export default function Playground() {
     a.download = fileName.endsWith(".suri") ? fileName : "main.suri";
     a.click();
     URL.revokeObjectURL(url);
-    notify("Archivo .suri descargado.");
+    notify("Downloaded .suri file.");
   };
 
   const share = async () => {
     if (code.length > 2500) {
-      notify("Para compartir por enlace, usa programas de hasta 2500 caracteres.");
+      notify("To share by URL, keep programs under 2,500 characters.");
       return;
     }
     const link = new URL(location.href);
     link.searchParams.set("code", code);
-    try { await copyToClipboard(link.toString()); notify("Enlace copiado al portapapeles."); }
-    catch { notify("No se pudo copiar el enlace."); }
+    try { await copyToClipboard(link.toString()); notify("Share link copied to clipboard."); }
+    catch { notify("Could not copy the share link."); }
   };
 
   const clearResult = () => {
@@ -212,58 +212,58 @@ export default function Playground() {
   };
 
   const success = !!result?.ok;
-  const loadingLabel = action === "run" ? "Ejecutando" : action === "check" ? "Comprobando" : "Formateando";
-  const outputText = result?.stdout || (result?.ok ? "La operación terminó correctamente, sin salida." : "");
-  const errorText = error || result?.stderr || (!result ? "No hay errores. Ejecuta una comprobación para ver los diagnósticos." : "Sin errores del compilador.");
+  const loadingLabel = action === "run" ? "Running" : action === "check" ? "Checking" : "Formatting";
+  const outputText = result?.stdout || (result?.ok ? "The operation completed successfully with no output." : "");
+  const errorText = error || result?.stderr || (!result ? "No errors yet. Run a check to see diagnostics." : "No compiler errors.");
 
   return (
     <div className="app-shell">
       <header className="main-header">
-        <a className="brand" href="/" aria-label="Semauri Playground, inicio">
-          <img src="/semauri-logo.png" alt="Símbolo Semauri" width="42" height="42" />
+        <a className="brand" href="/" aria-label="Semauri Playground, home">
+          <img src="/semauri-logo.png" alt="Semauri symbol" width="42" height="42" />
           <span className="brand-type">semauri<span className="brand-dot">.</span></span>
           <span className="brand-divider" />
           <span className="brand-subtitle">playground</span>
         </a>
-        <nav className="header-nav" aria-label="Enlaces principales">
-          <a href="https://github.com/edujbarrios/semauri" target="_blank" rel="noopener noreferrer"><BookOpen size={16} /> Documentación</a>
+        <nav className="header-nav" aria-label="Main navigation">
+          <a href="https://github.com/edujbarrios/semauri" target="_blank" rel="noopener noreferrer"><BookOpen size={16} /> Docs</a>
           <a href="https://github.com/edujbarrios/semauri-playground" target="_blank" rel="noopener noreferrer"><Github size={16} /> Open source <ExternalLink size={13} /></a>
           <span className="version-chip"><span className="chip-dot" /> Semauri v0.71.0</span>
         </nav>
-        <button className="menu-button" type="button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Abrir menú">
+        <button className="menu-button" type="button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu">
           {menuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </header>
 
       {menuOpen && <nav className="mobile-menu">
         <a href="https://github.com/edujbarrios/semauri" target="_blank" rel="noopener noreferrer">Documentación</a>
-        <a href="https://github.com/edujbarrios/semauri-playground" target="_blank" rel="noopener noreferrer">GitHub / Código fuente</a>
+        <a href="https://github.com/edujbarrios/semauri-playground" target="_blank" rel="noopener noreferrer">GitHub / Source code</a>
       </nav>}
 
       <main className="page-main">
         <section className="hero">
           <div className="hero-content">
-            <div className="hero-eyebrow"><Sparkles size={14} /> TU ESPACIO PARA CREAR</div>
-            <h1>Las ideas se convierten <span>en código.</span></h1>
-            <p>Escribe, experimenta y ejecuta Semauri directamente desde tu navegador. Sin instalaciones. Solo código e imaginación.</p>
+            <div className="hero-eyebrow"><Sparkles size={14} /> YOUR SPACE TO CREATE</div>
+            <h1>Ideas become <span>real code.</span></h1>
+            <p>Write, experiment, and run Semauri right in your browser. No installation needed. Just code and creativity.</p>
           </div>
           <div className="hero-art" aria-hidden="true">
             <div className="hero-glow" />
             <img src="/semauri-logo.png" alt="" />
           </div>
-          <div className="hero-status"><span className="status-indicator" /> Entorno interactivo <span className="hero-status-divider" /> Código abierto</div>
+          <div className="hero-status"><span className="status-indicator" /> Interactive environment <span className="hero-status-divider" /> Open source</div>
         </section>
 
         <section className={"workspace" + (fullscreen ? " workspace-fullscreen" : "")} aria-label="Editor de Semauri">
           <div className="workspace-toolbar">
-            <div className="workspace-heading"><Code2 size={18} /> <strong>Área de trabajo</strong><span className="workspace-note">Tu espacio de código</span></div>
+            <div className="workspace-heading"><Code2 size={18} /> <strong>Workspace</strong><span className="workspace-note">Your coding space</span></div>
             <div className="workspace-actions">
               <div className="example-menu-wrap">
                 <button className="tool-button example-trigger" type="button" onClick={() => setShowExamples(!showExamples)} aria-expanded={showExamples}>
-                  <Braces size={16} /> Ejemplos <ChevronDown size={14} />
+                  <Braces size={16} /> Examples <ChevronDown size={14} />
                 </button>
                 {showExamples && <div className="examples-menu" role="menu">
-                  <div className="examples-menu-title">CARGAR UN EJEMPLO</div>
+                  <div className="examples-menu-title">LOAD AN EXAMPLE</div>
                   {examples.map(ex => (
                     <button type="button" role="menuitem" key={ex.id} onClick={() => chooseExample(ex.id)}
                       className={"example-option" + (selectedExample === ex.id ? " selected" : "")}>
@@ -274,18 +274,18 @@ export default function Playground() {
                   ))}
                 </div>}
               </div>
-              <button className="tool-button" title="Subir archivo .suri" type="button" onClick={() => filePicker.current?.click()}><ArrowUpFromLine size={16} /><span className="desktop-label">Abrir</span></button>
-              <button className="tool-button" title="Descargar programa" type="button" onClick={download}><ArrowDownToLine size={16} /><span className="desktop-label">Guardar</span></button>
-              <button className="tool-button" title="Compartir programa" type="button" onClick={() => void share()}><Share2 size={16} /><span className="desktop-label">Compartir</span></button>
-              <button className="tool-button full-button" title={fullscreen ? "Reducir" : "Ampliar"} type="button" onClick={() => setFullscreen(!fullscreen)}><Maximize2 size={16} /></button>
+              <button className="tool-button" title="Open .suri file" type="button" onClick={() => filePicker.current?.click()}><ArrowUpFromLine size={16} /><span className="desktop-label">Open</span></button>
+              <button className="tool-button" title="Download program" type="button" onClick={download}><ArrowDownToLine size={16} /><span className="desktop-label">Download</span></button>
+              <button className="tool-button" title="Share program" type="button" onClick={() => void share()}><Share2 size={16} /><span className="desktop-label">Share</span></button>
+              <button className="tool-button full-button" title={fullscreen ? "Exit fullscreen" : "Expand editor"} type="button" onClick={() => setFullscreen(!fullscreen)}><Maximize2 size={16} /></button>
               <input ref={filePicker} className="visually-hidden" type="file" accept=".suri,text/plain"
                 onChange={event => { void openFile(event.target.files?.[0]); event.target.value = ""; }} />
             </div>
           </div>
 
-          <div className="mobile-switch" role="tablist" aria-label="Panel visible">
+          <div className="mobile-switch" role="tablist" aria-label="Visible panel">
             <button type="button" role="tab" aria-selected={mobilePanel === "editor"} className={mobilePanel === "editor" ? "active" : ""} onClick={() => setMobilePanel("editor")}><Code2 size={15} /> Editor</button>
-            <button type="button" role="tab" aria-selected={mobilePanel === "console"} className={mobilePanel === "console" ? "active" : ""} onClick={() => setMobilePanel("console")}><Terminal size={15} /> Consola</button>
+            <button type="button" role="tab" aria-selected={mobilePanel === "console"} className={mobilePanel === "console" ? "active" : ""} onClick={() => setMobilePanel("console")}><Terminal size={15} /> Console</button>
           </div>
 
           <div className="panels">
@@ -294,7 +294,7 @@ export default function Playground() {
                 <div className="file-tab"><FileCode2 size={15} /><span>{fileName}</span><span className="file-tab-dot" /></div>
                 <span className="pane-header-meta">Semauri <b>.suri</b></span>
               </div>
-              <div className="editor-surface" aria-label="Código Semauri">
+              <div className="editor-surface" aria-label="Semauri code">
                 <CodeEditor
                   height="100%"
                   defaultLanguage="semauri"
@@ -321,32 +321,32 @@ export default function Playground() {
               </div>
               <div className="editor-footer">
                 <span><span className="file-ready" /> Semauri</span>
-                <span>UTF-8 <span className="footer-dot">·</span> {code.split("\n").length} líneas</span>
+                <span>UTF-8 <span className="footer-dot">·</span> {code.split("\n").length} lines</span>
               </div>
             </div>
 
             <div className={"console-pane" + (mobilePanel !== "console" ? " mobile-hidden" : "")}>
               <div className="pane-header console-header">
-                <div className="console-title"><Terminal size={16} /> <strong>Consola</strong></div>
-                <button type="button" className="clear-button" onClick={clearResult} title="Limpiar consola"><RotateCcw size={14} /> Limpiar</button>
+                <div className="console-title"><Terminal size={16} /> <strong>Console</strong></div>
+                <button type="button" className="clear-button" onClick={clearResult} title="Clear console"><RotateCcw size={14} /> Clear</button>
               </div>
               <div className="console-tabs">
-                <button type="button" className={consoleTab === "output" ? "selected" : ""} onClick={() => setConsoleTab("output")}>Salida</button>
+                <button type="button" className={consoleTab === "output" ? "selected" : ""} onClick={() => setConsoleTab("output")}>Output</button>
                 <button type="button" className={consoleTab === "errors" ? "selected" : ""} onClick={() => setConsoleTab("errors")}>
-                  Diagnósticos {(result?.diagnostics.length || 0) > 0 && <span className="error-count">{result?.diagnostics.length}</span>}
+                  Diagnostics {(result?.diagnostics.length || 0) > 0 && <span className="error-count">{result?.diagnostics.length}</span>}
                 </button>
               </div>
               <div className="console-surface">
-                {action ? <div className="console-running"><Loader2 className="spinner" size={21} /><span>{loadingLabel}...</span><small>Compilador oficial Semauri</small></div>
+                {action ? <div className="console-running"><Loader2 className="spinner" size={21} /><span>{loadingLabel}...</span><small>Official Semauri compiler</small></div>
                 : result && consoleTab === "output" ? (
                   <div className="console-output">
                     <div className={"output-status" + (success ? " success" : " failure")}>
                       {success ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
-                      {success ? "Proceso completado" : "Proceso terminado con errores"}
+                      {success ? "Process completed" : "Process finished with errors"}
                       <span>{result.elapsedMs} ms</span>
                     </div>
                     <pre>{outputText || result.stderr || error}</pre>
-                    <p className="process-code">El proceso terminó con código {result.exitCode}.</p>
+                    <p className="process-code">Process exited with code {result.exitCode}.</p>
                   </div>
                 ) : result && consoleTab === "errors" ? (
                   <div className="diagnostics-list">
@@ -355,44 +355,44 @@ export default function Playground() {
                         setMobilePanel("editor"); editorRef.current?.setPosition({ lineNumber: d.line, column: d.column });
                         editorRef.current?.revealLineInCenter(d.line);
                       }}>
-                        <XCircle size={16} /><span><b>{d.code} · Línea {d.line}:{d.column}</b><small>{d.message}</small></span>
+                        <XCircle size={16} /><span><b>{d.code} · Line {d.line}:{d.column}</b><small>{d.message}</small></span>
                       </button>
                     )) : <pre className="diagnostics-plain">{errorText}</pre>}
                   </div>
                 ) : <div className="console-empty">
                   <div className="console-empty-icon">{consoleTab === "errors" ? <ShieldCheck size={28} /> : <Terminal size={28} />}</div>
-                  <h3>{consoleTab === "errors" ? "Sin diagnósticos todavía" : "Todo listo para comenzar"}</h3>
-                  <p>{consoleTab === "errors" ? "Ejecuta «Comprobar» para analizar el código." : "Ejecuta tu programa para ver el resultado aquí."}</p>
-                  {consoleTab === "output" && <div className="console-shortcut"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> para ejecutar</div>}
+                  <h3>{consoleTab === "errors" ? "No diagnostics yet" : "Ready when you are"}</h3>
+                  <p>{consoleTab === "errors" ? "Click Check to analyze your code." : "Run your program to see its output here."}</p>
+                  {consoleTab === "output" && <div className="console-shortcut"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to run</div>}
                 </div>}
               </div>
               <div className="console-footer">
-                <span><span className={"indicator" + (result && !result.ok ? " indicator-error" : "")} /> {action ? "Procesando..." : result ? (success ? "Sin errores" : "Con errores") : "En espera"}</span>
-                <span>{result ? result.elapsedMs + " ms" : "Salida del programa"}</span>
+                <span><span className={"indicator" + (result && !result.ok ? " indicator-error" : "")} /> {action ? "Processing..." : result ? (success ? "No errors" : "With errors") : "Waiting"}</span>
+                <span>{result ? result.elapsedMs + " ms" : "Program output"}</span>
               </div>
             </div>
           </div>
 
           <div className="command-bar">
-            <div className="command-hint"><ShieldCheck size={17} /> Ejecución con permisos limitados <span>·</span> Solo salida por consola</div>
+            <div className="command-hint"><ShieldCheck size={17} /> Restricted execution permissions <span>·</span> Console output only</div>
             <div className="command-buttons">
-              <button type="button" disabled={!!action} className="command secondary" onClick={() => void runAction("format")}><WandSparkles size={16} /> Formatear</button>
-              <button type="button" disabled={!!action} className="command secondary" onClick={() => void runAction("check")}><CheckCircle2 size={16} /> Comprobar</button>
+              <button type="button" disabled={!!action} className="command secondary" onClick={() => void runAction("format")}><WandSparkles size={16} /> Format</button>
+              <button type="button" disabled={!!action} className="command secondary" onClick={() => void runAction("check")}><CheckCircle2 size={16} /> Check</button>
               <button type="button" disabled={!!action} className="command primary" onClick={() => void runAction("run")}>
                 {action === "run" ? <Loader2 size={16} className="spinner" /> : <Play size={16} fill="currentColor" />}
-                {action === "run" ? "Ejecutando" : "Ejecutar"} <span className="shortcut-hint">⌘ ↵</span>
+                {action === "run" ? "Running" : "Run"} <span className="shortcut-hint">⌘ ↵</span>
               </button>
             </div>
           </div>
         </section>
 
         <div className="below-workspace">
-          <div className="hint-card"><div className="hint-icon"><Sparkles size={20} /></div><div><h3>Aprende experimentando</h3><p>Explora los ejemplos, modifica el código y descubre cómo funciona Semauri. Cada ejecución usa el compilador real.</p></div><button type="button" onClick={() => { setShowExamples(true); window.scrollTo({ top: 320, behavior: "smooth" }); }}>Ver ejemplos <ChevronDown size={15} /></button></div>
-          <a className="docs-card" href="https://github.com/edujbarrios/semauri/blob/main/docs/language-guide.md" target="_blank" rel="noopener noreferrer"><CircleHelp size={21} /><span><strong>¿Nuevo en Semauri?</strong><small>Consulta la guía del lenguaje</small></span><ExternalLink size={15} /></a>
+          <div className="hint-card"><div className="hint-icon"><Sparkles size={20} /></div><div><h3>Learn by experimenting</h3><p>Explore examples, edit the code, and discover how Semauri works. Every run uses the real compiler.</p></div><button type="button" onClick={() => { setShowExamples(true); window.scrollTo({ top: 320, behavior: "smooth" }); }}>Explore examples <ChevronDown size={15} /></button></div>
+          <a className="docs-card" href="https://github.com/edujbarrios/semauri/blob/main/docs/language-guide.md" target="_blank" rel="noopener noreferrer"><CircleHelp size={21} /><span><strong>New to Semauri?</strong><small>Read the language guide</small></span><ExternalLink size={15} /></a>
         </div>
       </main>
 
-      <footer className="site-footer"><span>© 2026 Semauri · Hecho para aprender, explorar y crear.</span><span>Código abierto · <a href="https://github.com/edujbarrios/semauri-playground" target="_blank" rel="noopener noreferrer">GitHub <ExternalLink size={12} /></a></span></footer>
+      <footer className="site-footer"><span>© 2026 Semauri · Built for learning, exploring, and creating.</span><span>Open source · <a href="https://github.com/edujbarrios/semauri-playground" target="_blank" rel="noopener noreferrer">GitHub <ExternalLink size={12} /></a></span></footer>
       {toast && <div className="toast" role="status"><Check size={16} /> {toast}</div>}
     </div>
   );

@@ -22,20 +22,20 @@ export const MAX_SOURCE_BYTES = 32 * 1024;
 
 export function validateRequest(value: unknown): { action: PlaygroundAction; code: string } {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error("La petición debe ser un objeto JSON.");
+    throw new Error("The request must be a JSON object.");
   }
   const payload = value as Record<string, unknown>;
   if (payload.action !== "run" && payload.action !== "check" && payload.action !== "format") {
-    throw new Error("Operación desconocida. Usa run, check o format.");
+    throw new Error("Unknown action. Use run, check, or format.");
   }
   if (typeof payload.code !== "string") {
-    throw new Error("Se requiere código Semauri en formato de texto.");
+    throw new Error("Semauri source code must be a string.");
   }
   if (new TextEncoder().encode(payload.code).byteLength > MAX_SOURCE_BYTES) {
-    throw new Error("El programa supera el límite de 32 KiB.");
+    throw new Error("The program exceeds the 32 KiB limit.");
   }
   if (!payload.code.trim()) {
-    throw new Error("Escribe algún código Semauri primero.");
+    throw new Error("Enter some Semauri code first.");
   }
   return { action: payload.action, code: payload.code };
 }
