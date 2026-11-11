@@ -1,107 +1,65 @@
 # Semauri Playground
 
-![Semauri logo](public/semauri-logo.png)
+<div align="center">
 
-**Write, explore, and run Semauri in your browser.**
+<img src="public/semauri-logo.png" alt="Semauri logo" width="120" />
 
-[Semauri Playground](https://github.com/edujbarrios/semauri-playground) is an open-source coding environment for [Semauri](https://github.com/edujbarrios/semauri), a natural-language-inspired programming language. It combines a modern code editor with the official Semauri compiler so you can experiment with `.suri` programs without leaving the page.
+### Write, run, and explore Semauri in your browser.
+
+**[Open Semauri Playground](https://semauri-playground.vercel.app)** · [Semauri language](https://github.com/edujbarrios/semauri) · [Language guide](https://github.com/edujbarrios/semauri/blob/main/docs/language-guide.md)
+
+</div>
+
+Semauri Playground is a free, open-source interactive environment for [Semauri](https://github.com/edujbarrios/semauri), the natural-language-inspired programming language. Write `.suri` code in a full-featured editor, run it with the **official Semauri compiler**, and see results instantly in the integrated console.
 
 ## Features
 
-- **Semauri syntax highlighting** in Monaco Editor, with a custom theme, language rules, and code completion snippets.
-- **Run, Check, and Format** commands powered by the official Semauri compiler.
-- **Interactive console** displaying program output, compilation results, and errors.
-- **Inline diagnostics** with source positions when supplied by the compiler.
-- **Ready-to-run examples** covering basic programs, lists, running statistics, and adjacent differences.
-- **File management** for opening and downloading `.suri` files.
-- **Shareable links** for short programs, plus local draft preservation.
-- **Responsive interface** designed for desktop and mobile devices.
-- **Open source**, with automated checks and an MIT license.
+- **Syntax highlighting** for Semauri, powered by Monaco Editor and a dedicated language grammar.
+- **Smart editing** with completion snippets, line numbers, bracket pairing, and a dark theme.
+- **Real execution** with the official Semauri compiler—no simulated language interpreter.
+- **Run, Check, and Format** actions for exploring and validating `.suri` programs.
+- **Interactive console** showing output, errors, execution status, and source diagnostics.
+- **Ready-to-run examples** covering first programs, lists, running statistics, and adjacent differences.
+- **Open and download `.suri` files**, save a draft in your browser, and share short programs via links.
+- **Responsive interface** for desktop and mobile devices.
 
-## Try Semauri
+## Try it online
 
-A small Semauri program looks like this:
+Visit **[semauri-playground.vercel.app](https://semauri-playground.vercel.app)** and select an example or write your own code.
 
 ```text
-let values be a list of 3, 5, 2, 6.
-let totals be running total of values.
+let readings be a list of 3, 5, 2, 6.
+let totals be running total of readings.
 
 assert totals is equal to (a list of 3, 8, 10, 16).
 print "Running sum verified".
 ```
 
-Use the **Examples** menu to load a program. Select **Run** to execute it, **Check** to validate it without running it, or **Format** to apply the language's formatter.
-
-## Getting started locally
-
-You will need **Node.js 22 or newer**, npm, and the [Semauri compiler](https://github.com/edujbarrios/semauri) to execute programs.
-
-```sh
-git clone https://github.com/edujbarrios/semauri-playground.git
-cd semauri-playground
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
-For local **Run**, **Check**, and **Format** support, set `SEMAURI_BINARY_PATH` to the absolute path of your installed Semauri executable before starting the development server:
-
-```sh
-SEMAURI_BINARY_PATH=/absolute/path/to/semauri npm run dev
-```
-
-On Linux x86_64, the production build script can prepare the version-pinned official compiler automatically. On other development platforms, use `SEMAURI_BINARY_PATH` to select your local installation.
-
-### Quality checks
-
-```sh
-npm test
-npm run typecheck
-npm run build
-```
-
-The automated test suite also exercises the real compiler through the HTTP API and checks that the compiled executable is included in the server build.
+Select **Run** to execute the program, **Check** to validate it, or **Format** to apply Semauri's official formatter. Results appear in the console beside the editor.
 
 ## How it works
 
-The interface uses **Next.js**, **React**, **TypeScript**, and **Monaco Editor**. Semauri syntax highlighting is implemented as a dedicated Monaco language definition.
+The application uses **Next.js, React, TypeScript, and Monaco Editor**, with Semauri-specific syntax highlighting and completion rules. When you execute a program, a server endpoint invokes the **official Rust compiler**. The compiler remains the source of truth for parsing, typing, formatting, and runtime behavior.
 
-When you run a program, the server invokes the **official Semauri Rust compiler**. The playground does not use a simulated interpreter or reimplement Semauri semantics in JavaScript.
-
-The compiler is the source of truth for parsing, type checking, formatting, execution, and diagnostics.
-
-## Execution limits
-
-To make interactive experimentation safer, the execution endpoint:
-
-- Accepts up to **32 KiB** of source code per request.
-- Limits compiler execution to **4 seconds** and process output to **64 KiB**.
-- Grants only the Semauri `console_write` capability; other capabilities are not enabled.
-- Uses isolated temporary working directories and removes them after each request.
-- Performs basic request throttling.
-
-These limits are safeguards, **not a complete security sandbox** or a substitute for infrastructure-level abuse protection.
+The public execution endpoint imposes limits on program size, execution time, and output. It grants only the Semauri `console_write` capability to user programs. These measures reduce risk but are not a complete security sandbox.
 
 ## Project structure
 
 | Path | Purpose |
 | --- | --- |
-| `app/` | Application pages, styling, and compiler API |
-| `components/playground.tsx` | Editor, console, examples, and file actions |
-| `lib/semauri-language.ts` | Syntax highlighting, editor configuration, and completions |
-| `lib/protocol.ts` | Request validation and diagnostic parsing |
-| `lib/examples.ts` | Example `.suri` programs |
+| `app/` | Pages, styles, and the compiler-backed API |
+| `components/playground.tsx` | Editor, console, and playground controls |
+| `lib/semauri-language.ts` | Syntax highlighting, language configuration, and completion |
+| `lib/examples.ts` | Sample Semauri programs |
+| `lib/protocol.ts` | Request validation and compiler diagnostics |
+| `public/` | The Semauri logo and other assets |
 | `scripts/` | Compiler preparation and integration checks |
-| `public/semauri-logo.png` | Semauri PNG logo |
-| `tests/` | Automated tests |
+| `tests/` | Automated regression tests |
 
 ## Contributing
 
-Contributions are welcome! Open an issue to suggest an improvement or report a bug, or submit a pull request with a focused change.
-
-Before opening a pull request, run the tests and type checker. For editor-language changes, check that syntax highlighting and completion suggestions agree with the official Semauri language.
+Contributions, bug reports, and suggestions are welcome. Check the existing issues or open a new one before starting a larger change. Please keep editor features consistent with the [official Semauri language](https://github.com/edujbarrios/semauri), and include tests when changing behavior.
 
 ## License
 
-This playground is licensed under the [MIT License](LICENSE). The [Semauri compiler](https://github.com/edujbarrios/semauri) is a separate project distributed under Apache-2.0. The Semauri name and supplied logo remain attributable to their owner.
+Semauri Playground is open source under the [MIT License](LICENSE). The [Semauri compiler](https://github.com/edujbarrios/semauri) is a separate Apache-2.0 project. The Semauri name and logo remain attributable to their respective owner.
